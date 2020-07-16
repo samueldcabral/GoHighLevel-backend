@@ -4,14 +4,19 @@
   "description": "GoHighLevel backend",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js",
+    "start": "nodemon -r esm src/index.js",
     "test": "npm test"
   },
   "author": "samuel dcabral",
   "license": "MIT",
   "dependencies": {
+    "body-parser": "^1.19.0",
     "dotenv": "^8.2.0",
-    "express": "^4.17.1"
+    "esm": "^3.2.25",
+    "express": "^4.17.1",
+    "firebase": "^7.16.0",
+    "moment": "^2.27.0",
+    "moment-timezone": "^0.5.31"
   },
   "devDependencies": {
     "nodemon": "^2.0.4"
