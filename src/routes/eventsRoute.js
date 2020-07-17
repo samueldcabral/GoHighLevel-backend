@@ -22,21 +22,21 @@ router.get("/events", async (request, response) => {
   const snapshot = await db.collection("events").get();
   const docsArr = [];
 
-  snapshot.forEach((doc) => {
-    const docFormatted = getObjectFromApiDataWithFormatedDateAndTimezone(
-      doc,
-      doc.data().Timezone
+  snapshot.forEach((item) => {
+    const doc = getObjectFromApiDataWithFormatedDateAndTimezone(
+      item,
+      item.data().Timezone
     );
 
     if (
-      docFormatted.StartHours.isBetween(StartDate, EndDate) ||
-      docFormatted.EndHours.isBetween(StartDate, EndDate)
+      doc.StartHours.isBetween(StartDate, EndDate) ||
+      doc.EndHours.isBetween(StartDate, EndDate)
     ) {
-      if (doc.data().bookings) {
+      if (item.data().bookings) {
         docsArr.push({
-          id: doc.id,
-          bookings: doc.data().bookings,
-          Timezone: doc.data().Timezone,
+          id: item.id,
+          bookings: item.data().bookings,
+          Timezone: item.data().Timezone,
         });
       }
     }
@@ -44,7 +44,7 @@ router.get("/events", async (request, response) => {
   response.send(docsArr);
 });
 
-// TODO account so that the slots only count if there is no booking for the time
+// TODO reapply the if statement to consider the paramDate
 // 1. Free Slots takes two Params (Date, Timzone)
 // Returns all the free slots available for a given date converted to whatever timezone we pass
 router.get("/events/slots", async (request, response) => {
@@ -54,23 +54,15 @@ router.get("/events/slots", async (request, response) => {
   const docsArr = [];
   let test = "samuel";
 
-  snapshot.forEach((doc) => {
-    const docFormatted = getObjectFromApiDataWithFormatedDateAndTimezone(
-      doc,
-      doc.data().Timezone
+  snapshot.forEach((item) => {
+    const doc = getObjectFromApiDataWithFormatedDateAndTimezone(
+      item,
+      item.data().Timezone
     );
 
-    // console.log(`docFormatted.bookings ==> ${docFormatted.bookings}`);
-    // for (let book of docFormatted.bookings) {
-    //   console.log(`book ==> ${book.DateTime}`);
-    // }
-    // console.log(
-    //   `docFormatted.bookings.DateTime ==> ${docFormatted.bookings.DateTime}`
-    // );
-
-    const slots = getSlots(docFormatted);
-    docFormatted.Slots = slots;
-    const docWithNewTZ = getNewTz(docFormatted, Timezone);
+    const slots = getSlots(doc);
+    doc.Slots = slots;
+    const docWithNewTZ = getNewTz(doc, Timezone);
 
     let slotsAsStringsArr = [];
     for (let slot of docWithNewTZ.Slots) {
@@ -88,7 +80,7 @@ router.get("/events/slots", async (request, response) => {
     };
 
     docsArr.push(responseDoc);
-    // if (docFormatted.StartHours.isSame(paramDate, "day")) {
+    // if (doc.StartHours.isSame(paramDate, "day")) {
     // }
   });
 
@@ -101,33 +93,85 @@ router.get("/events/slots", async (request, response) => {
 router.post("/events", async (request, response) => {
   const { DateTime, Duration } = request.body;
   const snapshot = await db.collection("events").get();
+  let DateTimeMoment = moment(DateTime);
 
-  snapshot.forEach((doc) => {
-    const docFormatted = getObjectFromApiDataWithFormatedDateAndTimezone(
-      doc,
-      doc.data().Timezone
+  snapshot.forEach(async (item) => {
+    const doc = getObjectFromApiDataWithFormatedDateAndTimezone(
+      item,
+      item.data().Timezone
     );
+    const slots = getSlots(doc);
+    doc.Slots = slots;
 
-    if (docFormatted.StartHours.isSame(DateTime, "day")) {
+    // console.log("doc.id " + doc.id);
+    // console.log(`doc.StartHours ==> ${doc.StartHours}`);
+    // console.log(`doc.EndHours ==> ${doc.EndHours}`);
+    // console.log(`doc.StartHours date ==> ${doc.StartHours.date()}`);
+    // console.log(`DateTimeMoment ==> ${DateTimeMoment}`);
+    // console.log(`DateTimeMoment date ==> ${DateTimeMoment.date()}`);
+    // console.log(
+    //   `doc.StartHours.isSame(DateTime, "day") ==> ${doc.StartHours.isSame(
+    //     DateTimeMoment,
+    //     "day"
+    //   )}`
+    // );
+    // console.log(doc.StartHours.date() === DateTimeMoment.date());
+
+    // console.log("----------------------------------\n\n\n");
+
+    if (doc.StartHours.date() === DateTimeMoment.date()) {
       let DurationNumber = Number(Duration);
-      let DateTimeMoment = moment(DateTime);
+      // let DateTimeMoment = moment(DateTime);
       let DateTimeMomentCopy = moment(DateTimeMoment);
       let DateTimePlusDuration = DateTimeMomentCopy.add(DurationNumber, "m");
 
       if (
-        docFormatted.StartHours.isAfter(DateTimeMoment) ||
-        docFormatted.EndHours.isBefore(DateTimePlusDuration)
+        doc.StartHours.isAfter(DateTimeMoment) ||
+        doc.EndHours.isBefore(DateTimePlusDuration)
       ) {
         response.status(422).json({ message: "Outside of availability" });
       } else {
-        response.send("OK");
+        console.log(`doc slots ==> ${doc.Slots}`);
+
+        let hasFoundAvailableSlot = false;
+
+        for (let slot of doc.Slots) {
+          if (DateTimeMoment.isSame(slot)) {
+            hasFoundAvailableSlot = true;
+          }
+        }
+
+        if (hasFoundAvailableSlot) {
+          const books = item.data().bookings ? item.data().bookings : [];
+          const newBooking = {
+            DateTime: DateTimeMoment.format(),
+            Duration: DurationNumber,
+          };
+
+          books.push(newBooking);
+
+          try {
+            const res = await item.ref.update({ bookings: books });
+            response.json({ title: "Success", msg: `The result is ${res}` });
+          } catch (error) {
+            response.json({
+              title: "Failed",
+              msg: "It failed when trying to add to database",
+            });
+          }
+
+          // console.log(`books ==> ${books} - ${typeof books}`);
+          // // console.log("res " + res);
+        } else {
+          response.status(422).json({ message: "No Slots Available" });
+        }
       }
 
       // console.log(`DateTime ==> ${DateTime}`);
-      // console.log(`docFormatted ==> ${docFormatted}`);
+      // console.log(`doc ==> ${doc}`);
       // console.log(`DateTimeMoment ==> ${DateTimeMoment}`);
       // console.log(`DateTimePlusDuration ==> ${DateTimePlusDuration}`);
-      // console.log(`docFormatted StartHours ==> ${docFormatted.StartHours}`);
+      // console.log(`doc StartHours ==> ${doc.StartHours}`);
       // console.log(
       //   `docFormatted StartHours .isBefore(DateTime) ==> ${docFormatted.StartHours.isBefore(
       //     DateTime
