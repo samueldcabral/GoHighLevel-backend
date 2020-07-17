@@ -18,12 +18,23 @@ export function getObjectFromApiDataWithFormatedDateAndTimezone(doc, tz) {
   // console.log(`end ==> ${end}`);
   // console.log(`typeof start ==> ${typeof start}`);
   // console.log(`typeof end ==> ${typeof end}`);
+  console.log(`start ==> ${start}`);
+
   const StartHours = moment.tz(start, tz);
+  console.log(`StartHours ==> ${StartHours}`);
   const EndHours = moment.tz(end, tz);
 
   let bookingArr = [];
   for (let booking of bookings) {
-    bookingArr.push(moment.tz(booking, tz));
+    console.log(`booking.DateTime ==> ${booking.DateTime}`);
+    console.log(
+      `moment.tz(booking.DateTime, tz), ==> ${moment.tz(booking.DateTime, tz)}`
+    );
+
+    bookingArr.push({
+      Duration: booking.Duration,
+      DateTime: moment.tz(booking.DateTime, tz),
+    });
   }
 
   return {
@@ -54,7 +65,9 @@ export function getNewTz(doc, tz) {
   const { StartHours, EndHours, Slots, bookings } = doc;
   let slotsArr = [];
 
+  console.log(`StartHours NEWTZ 1 ==> ${StartHours}`);
   StartHours.tz(tz);
+  console.log(`StartHours NEWTZ 2 ==> ${StartHours}`);
   EndHours.tz(tz);
 
   for (let slot of Slots) {
@@ -62,8 +75,14 @@ export function getNewTz(doc, tz) {
     slot.tz(tz).format();
   }
 
+  // TODO descomentar aqui
+  // let count = 0;
   for (let booking of bookings) {
-    booking.tz(tz).format();
+    // console.log("Count " + count);
+    // count++;
+    // console.log("FUnction getnewtz");
+    // console.log(`booking ==> ${booking.DateTime} - ${booking.Duration}`);
+    booking.DateTime.tz(tz).format();
   }
 
   // console.log("This is the AFTER *****************************");
