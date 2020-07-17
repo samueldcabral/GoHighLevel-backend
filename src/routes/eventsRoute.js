@@ -1,40 +1,95 @@
-import express, { request } from "express";
+import express from "express";
 import { db } from "../config/firebase";
-import { getStartAndEndHours } from "../Utils/Utils";
+import { getObjectFromApiDataWithFormatedDate, getSlots } from "../Utils/Utils";
+import moment from "moment-timezone";
 
 const router = express.Router();
 
-router.get("/", (request, response) => {
-  response.send("GET Events (/api/events)");
-});
+router.get("/events", async (request, response) => {
+  const startDate = moment(request.query.start);
+  const endDate = moment(request.query.end);
+  startDate.utc();
+  endDate.utc();
 
-router.get("/slots", async (request, response) => {
+  //This below is to make sure the range is from start to end(inclusive)
+  endDate.add(1, "day");
   const snapshot = await db.collection("events").get();
   const docsArr = [];
 
   snapshot.forEach((doc) => {
-    // console.log(`DocId: ${doc.id}`);
-    // console.log("******************************");
-    const data = doc.data();
-    getStartAndEndHours(doc, data);
-    docsArr.push({ id: doc.id, data: doc.data() });
+    const docFormatted = getObjectFromApiDataWithFormatedDate(doc);
+    // // const { StartHours, EndHours } = doc.data();
+    // // const { seconds: STT } = StartHours;
+    // // const { seconds: ETT } = EndHours;
+
+    // // let newSTT = moment(STT * 1000);
+    // // let newETT = moment(ETT * 1000);
+
+    // // // console.log(`startDate ${startDate}`);
+    // // // console.log(`endDate ${endDate}`);
+    // // // console.log(`newSTT ${newSTT}`);
+    // // // console.log(`newETT ${newETT}`);
+
+    // console.log(`docFormatted.StartHours ==> ${docFormatted.StartHours}`);
+    // console.log(`docFormatted.EndHours ==> ${docFormatted.EndHours}`);
+    // console.log(`startDate ==> ${startDate}`);
+    // console.log(`endDate ==> ${endDate}`);
+    // console.log(
+    //   `docFormatted.StartHours.isBetween(startDate, endDate) ==> ${docFormatted.StartHours.isBetween(
+    //     startDate,
+    //     endDate
+    //   )}`
+    // );
+
+    if (
+      docFormatted.StartHours.isBetween(startDate, endDate) ||
+      docFormatted.EndHours.isBetween(startDate, endDate)
+    ) {
+      if (doc.data().bookings) {
+        docsArr.push({ id: doc.id, bookings: doc.data().bookings });
+      }
+    }
   });
-  // response.send(docsArr);
-  response.send("GET slots");
+  response.send(docsArr);
 });
 
-router.post("/", (request, response) => {
+// TODO params Date and Timezone -> return all available slots for that day
+router.get("/events/slots", async (request, response) => {
+  const snapshot = await db.collection("events").get();
+  const docsArr = [];
+
+  snapshot.forEach((doc) => {
+    const docFormatted = getObjectFromApiDataWithFormatedDate(doc);
+    const slots = getSlots(docFormatted);
+    docFormatted.Slots = slots;
+    docsArr.push(docFormatted);
+  });
+
+  response.send(docsArr);
+});
+
+router.post("/events", (request, response) => {
   response.send("POST Events (/api/events)");
 });
 
-export default router;
+// router.get("/test", async (request, response) => {
+//   let firebaseTestId = "qKteRuKGZrrTErmP0A2A";
+//   const snapshot = await db.collection("events").get();
+//   const docsArr = [];
 
-// app.get("/api", async (request, response) => {
-//   const result = await db.collection("events").get();
-//   result.forEach((doc) => {
-//     console.log(`${doc.id} => ${doc.data()}`);
-//     response.send(doc.data());
+//   snapshot.forEach((doc) => {
+//     if (doc.id === firebaseTestId) {
+//       const { StartHours, EndHours } = doc.data();
+//       let mStart = moment(StartHours);
+//       let mEnd = moment(EndHours);
+
+//       console.log(
+//         `mStart ==> ${mStart} - ${mStart.fromNow(true)} ${mStart.day()}`
+//       );
+//       console.log(`mEnd ==> ${mEnd}`);
+//       response.send("Ok");
+//     }
 //   });
-
-//   // response.send("Hello World");
 // });
+
+export default router;
