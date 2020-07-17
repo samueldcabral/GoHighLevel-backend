@@ -58,11 +58,12 @@ export function getNewTz(doc, tz) {
   EndHours.tz(tz);
 
   for (let slot of Slots) {
-    slotsArr.push(slot.tz(tz));
+    // slotsArr.push(slot.tz(tz));
+    slot.tz(tz).format();
   }
 
   for (let booking of bookings) {
-    booking.tz(tz);
+    booking.tz(tz).format();
   }
 
   // console.log("This is the AFTER *****************************");

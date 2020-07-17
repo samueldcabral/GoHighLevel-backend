@@ -62,25 +62,44 @@ router.get("/events/slots", async (request, response) => {
       doc,
       doc.data().Timezone
     );
-    const slots = getSlots(docFormatted);
-    docFormatted.Slots = slots;
 
-    console.log(`\n********** INICIO **********************\n`);
-    console.log(`docFormatted StartHours==> ${docFormatted.StartHours}`);
-    console.log(`docFormatted EndHours ==> ${docFormatted.EndHours}`);
-    console.log(`docFormatted Slots ==> ${docFormatted.Slots}`);
-    console.log(
-      `docFormatted bookings ==> ${docFormatted.bookings}\n-------------------\n`
-    );
-    const docWithNewTZ = getNewTz(docFormatted, "Asia/Calcutta");
-    console.log(`docWithNewTZ StartHours==> ${docWithNewTZ.StartHours}`);
-    console.log(`docWithNewTZ EndHours ==> ${docWithNewTZ.EndHours}`);
-    console.log(`docWithNewTZ Slots ==> ${docWithNewTZ.Slots}`);
-    console.log(
-      `docWithNewTZ bookings ==> ${docWithNewTZ.bookings}\n**********FIM FIM FIM FIM FIM **********************\n\n`
-    );
+    if (docFormatted.StartHours.isSame(paramDate, "day")) {
+      const slots = getSlots(docFormatted);
+      docFormatted.Slots = slots;
+      const docWithNewTZ = getNewTz(docFormatted, Timezone);
+      console.log(`docWithNewTZ StartHours==> ${docWithNewTZ.StartHours}`);
+      console.log(`docWithNewTZ EndHours ==> ${docWithNewTZ.EndHours}`);
+      console.log(`docWithNewTZ Slots ==> ${docWithNewTZ.Slots}`);
 
-    docsArr.push(docFormatted);
+      let arr = [];
+
+      for (let slot of docWithNewTZ.Slots) {
+        arr.push(slot.format());
+      }
+
+      let responseDoc = {
+        id: docWithNewTZ.id,
+        StartHours: docWithNewTZ.StartHours.format(),
+        EndHours: docWithNewTZ.EndHours.format(),
+        Timezone: docWithNewTZ.Timezone,
+        Duration: docWithNewTZ.Duration,
+        bookings: docWithNewTZ.bookings,
+        Slots: arr,
+      };
+
+      docsArr.push(responseDoc);
+    }
+
+    // console.log(`\n********** INICIO **********************\n`);
+    // console.log(`docFormatted StartHours==> ${docFormatted.StartHours}`);
+    // console.log(`docFormatted EndHours ==> ${docFormatted.EndHours}`);
+    // console.log(`docFormatted Slots ==> ${docFormatted.Slots}`);
+    // console.log(
+    //   `docFormatted bookings ==> ${docFormatted.bookings}\n-------------------\n`
+    // );
+    // console.log(
+    //   `docWithNewTZ bookings ==> ${docWithNewTZ.bookings}\n**********FIM FIM FIM FIM FIM **********************\n\n`
+    // );
   });
 
   response.send(docsArr);
@@ -91,16 +110,30 @@ router.post("/events", (request, response) => {
 });
 
 // router.get("/test", async (request, response) => {
-//   let startM = "2020-07-20T15:00";
-//   let endM = "2020-07-20T12:00";
+//   let startM = "2020-07-22T21:30:00+05:30";
+//   let endM = "2020-07-22T16:00:00Z";
 //   let tz = "UTC";
 
-//   let startMoment = moment.tz(startM, "UTC");
-//   let endMoment = moment.tz(endM, "Asia/Calcutta");
+//   // let startMoment = moment.tz(startM, "UTC");
+//   // let endMoment = moment.tz(endM, "Asia/Calcutta");
 
-//   console.log(`startMoment w ==> ${startMoment}`);
-//   console.log(`endMoment  w ==> ${endMoment}`);
-//   console.log(`endMoment  w ==> ${endMoment.tz("UTC")}`);
+//   let startMoment = moment(startM, "YYYY-MM-DDTHH:mmZ");
+//   let endMoment = moment(endM);
+
+//   let afterStart = startMoment.creationData();
+//   // console.log(`Object.keys(afterStart); ==> ${Object.keys(afterStart.locale)}`);
+
+//   console.log(`startMoment isUTC==> ${startMoment.utcOffset()}`);
+//   console.log(`startMoment isUTC==> ${startMoment}`);
+//   // console.log(`afterStart locale==> ${afterStart.locale.relativeTime()}`);
+//   // for (let i of afterStart) {
+//   //   console.log(`i ==> ${Object.keys(i)} - ${Object.values(i)}`);
+//   // }
+
+//   // console.log(`endMoment  w ==> ${endMoment}`);
+
+//   // console.log(startMoment.isSame("2020-07-20", "day"));
+//   // console.log(`endMoment  w ==> ${endMoment.tz("UTC")}`);
 //   // console.log(`startMoment w ==> ${startMoment.tz(tz)}`);
 //   // console.log(`endMoment  w ==> ${endMoment.tz(tz)}`);
 //   // let firebaseTestId = "qKteRuKGZrrTErmP0A2A";
