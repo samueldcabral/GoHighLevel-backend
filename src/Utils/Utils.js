@@ -18,18 +18,18 @@ export function getObjectFromApiDataWithFormatedDateAndTimezone(doc, tz) {
   // console.log(`end ==> ${end}`);
   // console.log(`typeof start ==> ${typeof start}`);
   // console.log(`typeof end ==> ${typeof end}`);
-  console.log(`start ==> ${start}`);
+  // console.log(`start ==> ${start}`);
 
   const StartHours = moment.tz(start, tz);
-  console.log(`StartHours ==> ${StartHours}`);
+  // console.log(`StartHours ==> ${StartHours}`);
   const EndHours = moment.tz(end, tz);
 
   let bookingArr = [];
   for (let booking of bookings) {
-    console.log(`booking.DateTime ==> ${booking.DateTime}`);
-    console.log(
-      `moment.tz(booking.DateTime, tz), ==> ${moment.tz(booking.DateTime, tz)}`
-    );
+    // console.log(`booking.DateTime ==> ${booking.DateTime}`);
+    // console.log(
+    //   `moment.tz(booking.DateTime, tz), ==> ${moment.tz(booking.DateTime, tz)}`
+    // );
 
     bookingArr.push({
       Duration: booking.Duration,
@@ -48,15 +48,58 @@ export function getObjectFromApiDataWithFormatedDateAndTimezone(doc, tz) {
 }
 
 export function getSlots(doc) {
-  const { StartHours: start, EndHours: end, Duration, Timezone } = doc;
+  const {
+    StartHours: start,
+    EndHours: end,
+    Duration,
+    Timezone,
+    bookings,
+  } = doc;
+
+  // console.log(`start ==> ${start}`);
+  // console.log(`end ==> ${end}`);
+
   const slots = [];
   let tempStart = moment(start);
 
+  // let bookingsArr = [];
+  // for (let book of bookings) {
+  //   let temp = moment(book.DateTime);
+  //   bookingsArr.push(temp);
+  // console.log(`getSlots book ==> ${book}`);
+  // console.log(`getSlots book ==> ${book.DateTime}`);
+  // console.log(`getSlots book ==> ${book.Duration}`);
+  // }
+
+  // if (bookingsArr) {
+  //   console.log(`bookingsArr ${bookingsArr} ${bookingsArr.length}`);
+  // }
+
   while (tempStart.isSame(end) === false) {
+    let isSlotAvailable = true;
     let myTime = moment(tempStart, Timezone);
-    slots.push(myTime);
+    // slots.push(myTime);
+    // console.log(`myTime ==> ${myTime}`);
+    if (Array.from(bookings).length < 1) {
+      slots.push(myTime);
+    } else {
+      for (let book of bookings) {
+        let startTimeRange = moment(book.DateTime);
+        let tempStartTime = moment(startTimeRange);
+        let endTimeRange = tempStartTime.add(book.Duration, "m");
+
+        if (myTime.isBetween(startTimeRange, endTimeRange, undefined, "[)")) {
+          isSlotAvailable = false;
+        }
+      }
+
+      if (isSlotAvailable) {
+        slots.push(myTime);
+      }
+    }
     tempStart.add(Duration, "m");
   }
+  console.log("\n");
 
   return slots;
 }
@@ -65,9 +108,9 @@ export function getNewTz(doc, tz) {
   const { StartHours, EndHours, Slots, bookings } = doc;
   let slotsArr = [];
 
-  console.log(`StartHours NEWTZ 1 ==> ${StartHours}`);
+  // console.log(`StartHours NEWTZ 1 ==> ${StartHours}`);
   StartHours.tz(tz);
-  console.log(`StartHours NEWTZ 2 ==> ${StartHours}`);
+  // console.log(`StartHours NEWTZ 2 ==> ${StartHours}`);
   EndHours.tz(tz);
 
   for (let slot of Slots) {
@@ -82,7 +125,7 @@ export function getNewTz(doc, tz) {
     // count++;
     // console.log("FUnction getnewtz");
     // console.log(`booking ==> ${booking.DateTime} - ${booking.Duration}`);
-    booking.DateTime.tz(tz).format();
+    booking.DateTime.tz(tz);
   }
 
   // console.log("This is the AFTER *****************************");

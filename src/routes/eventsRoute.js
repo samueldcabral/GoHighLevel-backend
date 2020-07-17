@@ -212,69 +212,80 @@ router.post("/events", async (request, response) => {
 //*
 //*
 //*
-// router.get("/test", async (request, response) => {
-//   // let startM = "2020-07-22T21:30:00+05:30";
-//   let startM = "2020-07-22T11:30:00Z";
-//   let endM = "2020-07-22T16:00:00Z";
-//   let day = "2020-07-22";
-//   let daytime = "2020-07-22T12:00+05:30";
+router.get("/test", async (request, response) => {
+  // let startM = "2020-07-22T21:30:00+05:30";
+  let startM = "2020-07-22T12:00:00Z";
+  let endM = "2020-07-22T11:30:00Z";
+  let endn = "2020-07-22T12:00:00Z";
 
-//   const one = moment(startM);
-//   const two = moment(endM);
-//   const three = moment(daytime);
+  // let day = "2020-07-22";
+  // let daytime = "2020-07-22T12:00+05:30";
 
-//   console.log(`one ==> ${one}`);
-//   console.log(`two ==> ${two}`);
-//   console.log(`three ==> ${three}`);
+  const one = moment(startM);
+  const two = moment(endM);
+  const three = moment(endn);
+  console.log(`one ==> ${one}`);
+  console.log(
+    `one.isBetween(two, three) ==> ${one.isBetween(
+      two,
+      three,
+      undefined,
+      "[)"
+    )}`
+  );
 
-//   console.log(`one.isSame(three, "day") ==> ${one.isSame(three, "day")}`);
-//   console.log(`two.isSame(three, "day") ==> ${two.isSame(three, "day")}`);
-//   console.log(`one.isBefore(three) ==> ${one.isBefore(three)}`);
-//   console.log(`two.isBefore(three) ==> ${two.isBefore(three)}`);
-//   console.log(`one.isAfter(three) ==> ${one.isAfter(three)}`);
-//   console.log(`two.isAfter(three) ==> ${two.isAfter(three)}`);
+  // console.log(`one ==> ${one}`);
+  // console.log(`two ==> ${two}`);
+  // console.log(`three ==> ${three}`);
 
-//   // let tz = "UTC";
+  // console.log(`one.isSame(three, "day") ==> ${one.isSame(three, "day")}`);
+  // console.log(`two.isSame(three, "day") ==> ${two.isSame(three, "day")}`);
+  // console.log(`one.isBefore(three) ==> ${one.isBefore(three)}`);
+  // console.log(`two.isBefore(three) ==> ${two.isBefore(three)}`);
+  // console.log(`one.isAfter(three) ==> ${one.isAfter(three)}`);
+  // console.log(`two.isAfter(three) ==> ${two.isAfter(three)}`);
 
-//   // // let startMoment = moment.tz(startM, "UTC");
-//   // // let endMoment = moment.tz(endM, "Asia/Calcutta");
+  // let tz = "UTC";
 
-//   // let startMoment = moment(startM, "YYYY-MM-DDTHH:mmZ");
-//   // let endMoment = moment(endM);
+  // // let startMoment = moment.tz(startM, "UTC");
+  // // let endMoment = moment.tz(endM, "Asia/Calcutta");
 
-//   // let afterStart = startMoment.creationData();
-//   // // console.log(`Object.keys(afterStart); ==> ${Object.keys(afterStart.locale)}`);
+  // let startMoment = moment(startM, "YYYY-MM-DDTHH:mmZ");
+  // let endMoment = moment(endM);
 
-//   // console.log(`startMoment isUTC==> ${startMoment.utcOffset()}`);
-//   // console.log(`startMoment isUTC==> ${startMoment}`);
-//   // console.log(`afterStart locale==> ${afterStart.locale.relativeTime()}`);
-//   // for (let i of afterStart) {
-//   //   console.log(`i ==> ${Object.keys(i)} - ${Object.values(i)}`);
-//   // }
+  // let afterStart = startMoment.creationData();
+  // // console.log(`Object.keys(afterStart); ==> ${Object.keys(afterStart.locale)}`);
 
-//   // console.log(`endMoment  w ==> ${endMoment}`);
+  // console.log(`startMoment isUTC==> ${startMoment.utcOffset()}`);
+  // console.log(`startMoment isUTC==> ${startMoment}`);
+  // console.log(`afterStart locale==> ${afterStart.locale.relativeTime()}`);
+  // for (let i of afterStart) {
+  //   console.log(`i ==> ${Object.keys(i)} - ${Object.values(i)}`);
+  // }
 
-//   // console.log(startMoment.isSame("2020-07-20", "day"));
-//   // console.log(`endMoment  w ==> ${endMoment.tz("UTC")}`);
-//   // console.log(`startMoment w ==> ${startMoment.tz(tz)}`);
-//   // console.log(`endMoment  w ==> ${endMoment.tz(tz)}`);
-//   // let firebaseTestId = "qKteRuKGZrrTErmP0A2A";
-//   // const snapshot = await db.collection("events").get();
-//   // const docsArr = [];
+  // console.log(`endMoment  w ==> ${endMoment}`);
 
-//   // snapshot.forEach((doc) => {
-//   //   if (doc.id === firebaseTestId) {
-//   //     const { StartHours, EndHours } = doc.data();
-//   //     let mStart = moment(StartHours);
-//   //     let mEnd = moment(EndHours);
+  // console.log(startMoment.isSame("2020-07-20", "day"));
+  // console.log(`endMoment  w ==> ${endMoment.tz("UTC")}`);
+  // console.log(`startMoment w ==> ${startMoment.tz(tz)}`);
+  // console.log(`endMoment  w ==> ${endMoment.tz(tz)}`);
+  // let firebaseTestId = "qKteRuKGZrrTErmP0A2A";
+  // const snapshot = await db.collection("events").get();
+  // const docsArr = [];
 
-//   //     console.log(
-//   //       `mStart ==> ${mStart} - ${mStart.fromNow(true)} ${mStart.day()}`
-//   //     );
-//   //     console.log(`mEnd ==> ${mEnd}`);
-//   //     response.send("Ok");
-//   //   }
-//   // });
-// });
+  // snapshot.forEach((doc) => {
+  //   if (doc.id === firebaseTestId) {
+  //     const { StartHours, EndHours } = doc.data();
+  //     let mStart = moment(StartHours);
+  //     let mEnd = moment(EndHours);
+
+  //     console.log(
+  //       `mStart ==> ${mStart} - ${mStart.fromNow(true)} ${mStart.day()}`
+  //     );
+  //     console.log(`mEnd ==> ${mEnd}`);
+  //     response.send("Ok");
+  //   }
+  // });
+});
 
 export default router;
