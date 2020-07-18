@@ -48,11 +48,10 @@ router.get("/events", async (request, response) => {
 // 1. Free Slots takes two Params (Date, Timzone)
 // Returns all the free slots available for a given date converted to whatever timezone we pass
 router.get("/events/slots", async (request, response) => {
-  const paramDate = moment(request.query.Date);
   const Timezone = request.query.Timezone;
   const snapshot = await db.collection("events").get();
-  const docsArr = [];
-  let test = "samuel";
+  let paramDate = request.query.Date ? moment(request.query.Date) : false;
+  let docsArr = [];
 
   snapshot.forEach((item) => {
     const doc = getObjectFromApiDataWithFormatedDateAndTimezone(
@@ -79,9 +78,13 @@ router.get("/events/slots", async (request, response) => {
       Slots: slotsAsStringsArr,
     };
 
-    docsArr.push(responseDoc);
-    // if (doc.StartHours.isSame(paramDate, "day")) {
-    // }
+    if (paramDate) {
+      if (doc.StartHours.isSame(paramDate, "day")) {
+        docsArr.push(responseDoc);
+      }
+    } else {
+      docsArr.push(responseDoc);
+    }
   });
 
   response.send(docsArr);
