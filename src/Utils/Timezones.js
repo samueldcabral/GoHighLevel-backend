@@ -1,4 +1,4 @@
-let timezones = `Africa/Abidjan,Africa/Accra,
+let tz = `Africa/Abidjan,Africa/Accra,
 Africa/Addis_Ababa,Africa/Algiers,Africa/Asmara,
 Africa/Asmera,Africa/Bamako,Africa/Bangui,Africa/Banjul,
 Africa/Bissau,Africa/Blantyre,Africa/Brazzaville,Africa/Bujumbura,
@@ -133,6 +133,6 @@ US/Alaska,US/Aleutian,US/Arizona,US/Central,US/East-Indiana,US/Eastern,
 US/Hawaii,US/Indiana-Starke,US/Michigan,US/Mountain,US/Pacific,US/Pacific-New,
 US/Samoa,UTC,Universal,W-SU,WET `;
 
-timezones = timezones.split(",");
+let Timezones = tz.split(",");
 
-export default timezones;
+export default Timezones;

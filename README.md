@@ -1,6 +1,6 @@
 <h1 align="center">
   <br>
-   <img src="https://i.imgur.com/6ciMZ44.jpg" alt="My logo"/>
+   <img src="https://i.imgur.com/e7MHKNR.jpg" alt="My logo"/>
   <br>
 </h1>
 <p align="center">   

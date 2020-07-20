@@ -2,7 +2,7 @@ import moment from "moment-timezone";
 import Timezones from "./Timezones";
 moment().format();
 
-export function getObjectFromApiDataWithFormatedDateAndTimezone(doc, tz) {
+export function getDocumentWithDateAndTimezone(doc, tz) {
   const {
     StartHours: start,
     EndHours: end,
