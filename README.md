@@ -4,61 +4,53 @@
   <br>
 </h1>
 <p align="center">   
- <a href="https://reactjs.org/"><img src="https://img.shields.io/badge/React-%5E16.13.1-brightgreen?style=plastic&logo=appveyor"></a>
- <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/Typescript-%5E3.7.5-green?style=plastic&logo=appveyor"></a>
- <a href="https://github.com/axios/axios"><img src="https://img.shields.io/badge/Axios-%5E0.19.2-orange?style=plastic&logo=appveyor"></a>
- <a href="https://getbootstrap.com/"><img src="https://img.shields.io/badge/Bootstrap-%5E4.5.0-ff69b4?style=plastic&logo=appveyor"></a>
+ <a href="https://expressjs.com/"><img src="https://img.shields.io/badge/Express-%5E4.17.1-brightgreen?style=plastic&logo=appveyor"></a>
+ <a href="https://firebase.google.com/"><img src="https://img.shields.io/badge/Firebase-%5E7.16.0-orange?style=plastic&logo=appveyor"></a>
+ <a href="https://momentjs.com/"><img src="https://img.shields.io/badge/MomentJS-%5E2.27.0-ff69b4?style=plastic&logo=appveyor"></a>
  <a href="mailto:samueldcabral@gmail.com"><img src="https://img.shields.io/badge/Email-Me!-lightgrey?style=plastic&logo=appveyor"></a>
- <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue?style=plastic&logo=appveyor"></a>
+ <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue?style=plastic&logo=appveyor"></a> 
 </p>
 
 <p align="center">
-  Este projeto foi criado com o intuito de fazer algo. <a href="https://api.nasa.gov/">Pode ser incluído um link útil</a> nesta <strong>descrição</strong>. Mais detalhes podem ser incluídos para também dar mais dimensão à descrição que vai ser lida mais. Quanto mais linhas tiver aqui, vai parecer que você até se esforçou mais, rs.
+  This is the backend assignment for HighLevel and It consisted in creating three endpoints to handle the Creation of events, Reading of events and events' slots.<br> Check out the Frontend for this project. 
+   <a href="https://github.com/samueldcabral/GoHighLevel-frontend">Visit Frontend</a>
 </p>
 
-## Indíce
+## Index
 
-- [Screenshots](#Screenshots)
-- [Instalação](#Instalação)
-- [Contribuições](#Contribuições)
-- [Licença](#Licença)
+- [Get Started](#get-started)
+- [Endpoints](#endpoints)
+- [About Me](#about-me)
 
-<h2 id="Screenshots">Screenshots</h2>
-
-|             Tela Inicial (Usando o exemplo do Diário de Bordo)              |
-| :-------------------------------------------------------------------------: |
-| <img src="https://i.imgur.com/MXoUDia.png" width="700" alt="splash screen"> |
-
-|                 Tela do APOD - Astronomy Picture of the Day                 |
-| :-------------------------------------------------------------------------: |
-| <img src="https://i.imgur.com/iPYWYEw.png" width="700" alt="splash screen"> |
-
-|      Tela do Insight - Buscando as informações da superfície de Marte       |
-| :-------------------------------------------------------------------------: |
-| <img src="https://i.imgur.com/3c37IQb.png" width="700" alt="splash screen"> |
-
-|            Tela do cadastramento e visualização do diário (CRUD)            |
-| :-------------------------------------------------------------------------: |
-| <img src="https://i.imgur.com/pFFBXit.png" width="700" alt="splash screen"> |
-
-## Instalação
-
-Caso queira replicar este projeto, a instalação é simples.
+<h2 id="get-started">Get Started</h2>
+Copy each command below and paste them in the Terminal to set it up. <br>
+(For better experience, make sure you have use the frontend app - check it out <a href="https://github.com/samueldcabral/GoHighLevel-frontend">here</a> )
 
 ```bash
-git clone https://github.com/samueldcabral/React-Typescript-Boilerplate-and-Readme.git
-cd React-Typescript-Boilerplate-and-Readme/
+git clone https://github.com/samueldcabral/GoHighLevel-backend.git
+cd GoHighLevel-backend/
 npm install
 npm start
 ```
 
-## Contribuições
+<h2 id="endpoints">Endpoints</h2>
 
-Você pode contribuir de várias formas, por exemplo criando novas 'features', retirando bugs, melhorando a documentação e
-exemplos, ou até traduzindo algum documento daqui para outra língua.
-You may contribute in several ways like creating new features, fixing bugs, improving documentation and examples
-or translating any document here to your language.
+```js
+GET http://localhost:3003/api/events
+ - params  StartDate: string //'YYYY-MM-DD'
+           EndDate: string // 'YYYY-MM-DD'
 
-## Licença
+POST http://localhost:3003/api/events
+ - body  DateTime: string //'YYYY-MM-DDTHH:mmZ'
+         Duration: string //1 to 60
 
-[MIT](https://opensource.org/licenses/MIT) - Samuel D Cabral - 2020
+POST http://localhost:3003/api/events/slots
+ - params  Date?: string //'YYYY-MM-DD' (if left blank, it will return all events and their slots)
+           Timezone: string
+
+```
+
+<h2 id="about-me">About me</h2>
+<strong>Samuel Deschamps Cabral</strong>
+<br>
+samueldcabral@gmail.com
